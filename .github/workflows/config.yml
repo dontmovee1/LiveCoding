@@ -32,10 +32,11 @@ jobs:
           mkdir -p allure-results/history
           cp -R ./.github/gh-pages/history/* allure-results/history/
 
-      - name: Generate Allure report (вариант 1 — через контейнер)
+      - name: Generate Allure report (альтернатива)
         run: |
-          docker compose run --env PATH=/usr/bin:/usr/local/bin:/bin \
-            regression /bin/sh -c "/usr/bin/allure generate allure-results --clean -o allure-report"
+          # Устанавливаем Allure на хост
+          sudo apt-get update
+          sudo apt-get install -y allure
 
       - name: Update Allure history
         run: |
