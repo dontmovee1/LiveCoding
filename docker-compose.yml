@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./:/usr/workspace
+      - ./allure-results:/app/allure-results
     command: /bin/sh -c "ls -la && pytest -sv --alluredir=allure-results"
     working_dir: /usr/workspace
     environment:
