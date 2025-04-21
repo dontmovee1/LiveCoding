@@ -7,49 +7,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Checkout gh-pages for Allure history
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: gh-pages
           path: gh-pages
 
       - name: Set up Docker Compose
         run: |
-          # Убедимся, что Docker установлен (в ubuntu-latest он есть по умолчанию)
-          docker --version
-          # Для совместимости установим docker-compose (если нужно)
-          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose --version
+          mkdir -p ~/.docker/cli-plugins
+          curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+          chmod +x ~/.docker/cli-plugins/docker-compose
+          docker compose version
 
-      - name: Run UI-tests via docker-compose
+      - name: Build Docker images
+        run: docker compose build
+
+      - name: Run UI-tests and generate report
         env:
           LOGIN: ${{ secrets.LOGIN }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-          docker-compose up --exit-code-from regression || true
+          docker compose up --exit-code-from regression || true
+          # Отчёт теперь генерируется автоматически в контейнере
 
-      - name: Copy history from gh-pages to allure-results (if exists)
+      - name: Copy history from gh-pages
         run: |
           mkdir -p allure-results/history
-          # Копируем только если история существует
           if [ -d "gh-pages/history" ]; then
             cp -R gh-pages/history/* allure-results/history/
           fi
 
-      - name: Generate Allure report
-        run: |
-          docker-compose run regression /bin/sh -c "allure generate allure-results --clean -o allure-report"
-
       - name: Update Allure history
         run: |
           mkdir -p gh-pages/history
-          cp -R allure-report/history/* gh-pages/history/
+          if [ -d "allure-report/history" ]; then
+            cp -R allure-report/history/* gh-pages/history/
+          fi
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.5
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           token: ${{ secrets.CI_TOKEN }}
           branch: gh-pages
