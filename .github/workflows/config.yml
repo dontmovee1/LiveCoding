@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Run UI-tests via docker-compose
+      - name: Запуск UI-тестов через docker-compose
         env:
           LOGIN: ${{ secrets.LOGIN }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           docker-compose up --exit-code-from regression || true
-      - name: Generate Allure report
+      - name: Формирование отчёта Allure
         run: |
           sudo docker-compose run regression /bin/sh -c "allure generate allure-results --clean -o allure-report"
       - name: Deploy to Github Pages
