@@ -9,8 +9,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run UI-tests via docker-compose
         env:
-          LOGIN: ${{ secret.LOGIN }}
-          PASSWORD: ${{ secret.PASSWORD }}
+          LOGIN: ${{ secrets.LOGIN }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           docker-compose up --exit-code-from regression || true
       - name: Generate Allure report
