@@ -35,9 +35,9 @@ jobs:
 
       - name: Copy history from gh-pages
         run: |
-          mkdir -p allure-results/history
+          mkdir -p ./allure-results/history
           if [ -d "gh-pages/history" ]; then
-            cp -R gh-pages/history/* allure-results/history/
+            cp -R gh-pages/history/* ./allure-results/history/
           fi
 
       - name: Update Allure history
