@@ -12,10 +12,10 @@ jobs:
           LOGIN: ${{ secrets.LOGIN }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-          docker-compose up --exit-code-from regression || true
+          docker compose up --exit-code-from regression || true
       - name: Формирование отчёта Allure
         run: |
-          docker-compose run regression /bin/sh -c "allure generate allure-results --clean -o allure-report"
+          docker compose run regression /bin/sh -c "allure generate allure-results --clean -o allure-report"
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
