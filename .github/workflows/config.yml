@@ -1,10 +1,6 @@
 name: UI Tests
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main  # или имя вашей основной ветки
+on: workflow_dispatch
 
 jobs:
   ui-tests:
@@ -28,7 +24,7 @@ jobs:
 
       - name: Copy history from gh-pages to allure-results
         run: |
-          sudo mkdir -p allure-results/history
+          sudo mkdir -p allure-results/history  # Создает директорию для истории Allure
           sudo cp -R ./.github/gh-pages/history/* allure-results/history/
 
       - name: Generate Allure report
